@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.services.question;
+package de.hsrm.quiz_gateway.firebase.firestore.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import de.hsrm.quiz_gateway.entities.Question;
 import de.hsrm.quiz_gateway.entities.Quiz;
-import de.hsrm.quiz_gateway.enums.CollectionName;
+import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 
 @Service
 public class QuestionService {
@@ -28,18 +28,7 @@ public class QuestionService {
 
     public String createQuestion(Question question) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-
-        // Check if the category exists
-        String cat_id = question.getCategory_id();
-        CollectionReference categoriesRef = dbFirestore.collection(CollectionName.CATEGORIES.getName());
-        Query query = categoriesRef.whereEqualTo("category_id", cat_id);
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-        List<QueryDocumentSnapshot> documents = querySnapshot.get().getDocuments();
-
-        if (documents.isEmpty()) {
-            throw new IllegalArgumentException("Category does not exist: " + cat_id);
-        }
-
+        
         // Get the collection reference
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
 
@@ -123,7 +112,7 @@ public class QuestionService {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(question_id).delete();
 
-        // Suche nach Quizzen, die die gelöschte Kategorie referenzieren
+        // Suche nach Quizzen, die die gelöschte Frage referenzieren
         Query query = dbFirestore.collection(CollectionName.QUIZZES.getName()).whereArrayContains("question_ids",
                 question_id);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();

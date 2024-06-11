@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.controller;
+package de.hsrm.quiz_gateway.firebase.firestore.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.hsrm.quiz_gateway.entities.Question;
-import de.hsrm.quiz_gateway.services.question.QuestionService;
+import de.hsrm.quiz_gateway.firebase.firestore.services.QuestionService;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -41,13 +41,13 @@ public class QuestionController {
         return questionService.getAllQuestions();
     }
 
-    @GetMapping("/getByIds")
+    @PostMapping("/getByIds")
     public List<Question> getAllQuestionsWithIds(@RequestBody List<String> questionIds) throws InterruptedException, ExecutionException {
         return questionService.getAllQuestionsWithIds(questionIds);
     }
 
     @PutMapping("/update/{question_id}")
-    public String putMethodName(@PathVariable("question_id") String question_id, @RequestBody Question question) throws InterruptedException, ExecutionException {
+    public String updateQuestion(@PathVariable("question_id") String question_id, @RequestBody Question question) throws InterruptedException, ExecutionException {
         return questionService.updateQuestion(question_id, question);
     }
 

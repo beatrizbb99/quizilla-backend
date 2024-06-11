@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.enums;
+package de.hsrm.quiz_gateway.firebase.firestore.enums;
 
 public enum CollectionName {
     QUIZZES("Quizzes"),

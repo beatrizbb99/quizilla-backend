@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.controller;
+package de.hsrm.quiz_gateway.firebase.firestore.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.hsrm.quiz_gateway.entities.Quiz;
-import de.hsrm.quiz_gateway.services.quiz.QuizService;
+import de.hsrm.quiz_gateway.firebase.firestore.services.QuizService;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

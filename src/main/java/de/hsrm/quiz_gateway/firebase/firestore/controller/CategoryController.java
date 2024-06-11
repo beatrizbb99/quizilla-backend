@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.controller;
+package de.hsrm.quiz_gateway.firebase.firestore.controller;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.hsrm.quiz_gateway.entities.Category;
-import de.hsrm.quiz_gateway.services.category.CategoryService;
+import de.hsrm.quiz_gateway.firebase.firestore.services.CategoryService;
 
 @RestController
 @RequestMapping("api/categories")
@@ -31,8 +31,8 @@ public class CategoryController {
     }
 
     @GetMapping("/{category_id}")
-    public Category getCategory(@PathVariable("category_id") String cat_id) throws InterruptedException, ExecutionException {
-        return catService.getCategory(cat_id);
+    public Category getCategory(@PathVariable("category_id") String category_id) throws InterruptedException, ExecutionException {
+        return catService.getCategory(category_id);
     }
 
     @GetMapping
@@ -41,13 +41,13 @@ public class CategoryController {
     }
 
     @PutMapping("/update/{category_id}")
-    public String updateCategory(@PathVariable("category_id") String cat_id, @RequestBody Category category) throws InterruptedException, ExecutionException {
-        return catService.updateCategory(cat_id, category);
+    public String updateCategory(@PathVariable("category_id") String category_id, @RequestBody Category category) throws InterruptedException, ExecutionException {
+        return catService.updateCategory(category_id, category);
     }
 
-    @DeleteMapping("/delete/{category_id}")
-    public String deleteCategory(@PathVariable("category_id") String cat_id) throws InterruptedException, ExecutionException {
-        return catService.deleteCategory(cat_id);
+    @DeleteMapping("/delete/{category_id}/{category_name}")
+    public String deleteCategory(@PathVariable("category_id") String category_id, @PathVariable("category_name") String category_name) throws InterruptedException, ExecutionException {
+        return catService.deleteCategory(category_id, category_name);
     }
 
     

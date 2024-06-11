@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.services.category;
+package de.hsrm.quiz_gateway.firebase.firestore.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 
 import de.hsrm.quiz_gateway.entities.Category;
-import de.hsrm.quiz_gateway.enums.CollectionName;
+import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 
 @Service
 public class CategoryService {
@@ -33,7 +33,7 @@ public class CategoryService {
          * String categoryId = UUID.randomUUID().toString();
          * 
          * // Setze die UUID als ID für die Kategorie
-         * category.setCat_id(categoryId);
+         * category.setCategory_id(categoryId);
          * 
          * // Speichere die Kategorie in Firestore mit dem Kategorie-Namen als
          * Dokument-ID
@@ -64,9 +64,9 @@ public class CategoryService {
         return documentUuid;
     }
 
-    public Category getCategory(String cat_id) throws InterruptedException, ExecutionException {
+    public Category getCategory(String category_id) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(cat_id);
+        DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(category_id);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot document = future.get();
         Category category;
@@ -93,37 +93,37 @@ public class CategoryService {
         return categories;
     }
 
-    public String updateCategory(String cat_id, Category category) throws InterruptedException, ExecutionException {
+    public String updateCategory(String category_id, Category category) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference catRef = dbFirestore.collection(COLLECTION_NAME).document(cat_id);
+        DocumentReference catRef = dbFirestore.collection(COLLECTION_NAME).document(category_id);
 
         ApiFuture<DocumentSnapshot> future = catRef.get();
         DocumentSnapshot document = future.get();
         if (!document.exists()) {
-            throw new IllegalArgumentException("Quiz with id " + cat_id + " does not exist");
+            throw new IllegalArgumentException("Quiz with id " + category_id + " does not exist");
         }
 
         ApiFuture<WriteResult> updateFuture = catRef.set(category);
         updateFuture.get();
-        return "Successfully updated category with id " + cat_id;
+        return "Successfully updated category with id " + category_id;
     }
 
-    public String deleteCategory(String cat_name) throws InterruptedException, ExecutionException {
+    public String deleteCategory(String category_id, String cat_name) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(cat_name).delete();
+        ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(category_id).delete();
 
         // Suche nach Fragen, die die gelöschte Kategorie referenzieren
-        Query query = dbFirestore.collection(CollectionName.QUESTIONS.getName()).whereEqualTo("category_id", cat_name);
+        Query query = dbFirestore.collection(CollectionName.QUESTIONS.getName()).whereEqualTo("category", cat_name);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-            document.getReference().update("category_id", "");
+            document.getReference().update("category", "");
         }
 
         // Suche nach Quizzen, die die gelöschte Kategorie referenzieren
-        Query queryQuiz = dbFirestore.collection(CollectionName.QUIZZES.getName()).whereEqualTo("category_id", cat_name);
+        Query queryQuiz = dbFirestore.collection(CollectionName.QUIZZES.getName()).whereEqualTo("category", cat_name);
         ApiFuture<QuerySnapshot> querySnapshotQuiz = queryQuiz.get();
         for (DocumentSnapshot document : querySnapshotQuiz.get().getDocuments()) {
-            document.getReference().update("category_id", "");
+            document.getReference().update("category", "");
         }
         
         return "Successfully deleted category " + cat_name;

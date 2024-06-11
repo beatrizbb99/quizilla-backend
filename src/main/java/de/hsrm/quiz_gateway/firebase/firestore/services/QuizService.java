@@ -1,4 +1,4 @@
-package de.hsrm.quiz_gateway.services.quiz;
+package de.hsrm.quiz_gateway.firebase.firestore.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
@@ -19,7 +18,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import de.hsrm.quiz_gateway.entities.Question;
 import de.hsrm.quiz_gateway.entities.Quiz;
-import de.hsrm.quiz_gateway.enums.CollectionName;
+import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 
 @Service
 public class QuizService {
@@ -28,39 +27,18 @@ public class QuizService {
 
     public String createQuiz(Quiz quiz) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-
-        // Check if the category exists
-        String cat_id = quiz.getCategory_id();
-        CollectionReference categoriesRef = dbFirestore.collection(CollectionName.CATEGORIES.getName());
-        Query query = categoriesRef.whereEqualTo("category_id", cat_id);
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-        List<QueryDocumentSnapshot> documents = querySnapshot.get().getDocuments();
-
-        if (documents.isEmpty()) {
-            throw new IllegalArgumentException("Category does not exist: " + cat_id);
-        }
-
+        
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
         DocumentReference docRef = collectionRef.document();
         String documentUuid = docRef.getId();
         quiz.setQuiz_id(documentUuid);
+        int totalPoints = calculateTotalPoints(quiz.getQuestion_ids());
+        quiz.setPoints(totalPoints);
+
         ApiFuture<WriteResult> writeResult = docRef.set(quiz);
         writeResult.get();
 
         return documentUuid;
-
-        /*
-         * String quizId = UUID.randomUUID().toString();
-         * quiz.setQuiz_id(quizId);
-         * 
-         * // Speichere das Quiz in Firestore mit dem Namen als Dokument-ID
-         * ApiFuture<WriteResult> collectionsApiFuture =
-         * dbFirestore.collection(COLLECTION_NAME).document(quiz.getName())
-         * .set(quiz);
-         * 
-         * // Rückgabe der Aktualisierungszeit des Dokuments
-         * return collectionsApiFuture.get().getUpdateTime().toString();
-         */
     }
 
     public String addQuestionToQuiz(String quiz_id, String question_id)
@@ -147,6 +125,9 @@ public class QuizService {
             throw new IllegalArgumentException("Quiz with id " + quiz_id + " does not exist");
         }
 
+        int totalPoints = calculateTotalPoints(quiz.getQuestion_ids());
+        quiz.setPoints(totalPoints);
+
         ApiFuture<WriteResult> updateFuture = quizRef.set(quiz);
         updateFuture.get();
         return "Successfully updated quiz with id " + quiz_id;
@@ -193,5 +174,21 @@ public class QuizService {
         ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(quiz_id).delete();
         return "Successfully deleted quiz with id " + quiz_id;
     }
+
+    private int calculateTotalPoints(List<String> questionIds) throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        int totalPoints = 0;
+        for (String questionId : questionIds) {
+            DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName()).document(questionId);
+            ApiFuture<DocumentSnapshot> future = questionRef.get();
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
+                int points = document.getLong("points").intValue();
+                totalPoints += points;
+            }
+        }
+        return totalPoints;
+    }
+
 
 }

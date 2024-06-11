@@ -9,9 +9,8 @@ import lombok.Setter;
 @Getter
 public class Question {
     private String question_id;
-    private String category_id;
+    private String category;
     private List<String> options;
     private int points;
-    private int answer;
     private String question;
 }
