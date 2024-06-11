@@ -34,3 +34,4 @@ build/
 
 # Ignoriere
 src/main/resources/storageKey.json
+src/main/resources/CloudFunctionKey.json
