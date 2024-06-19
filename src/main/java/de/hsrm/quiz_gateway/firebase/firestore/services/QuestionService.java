@@ -17,6 +17,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 
+import de.hsrm.quiz_gateway.entities.Answer;
 import de.hsrm.quiz_gateway.entities.Question;
 import de.hsrm.quiz_gateway.entities.Quiz;
 import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
@@ -28,23 +29,14 @@ public class QuestionService {
 
     public String createQuestion(Question question) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        
-        // Get the collection reference
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
-
-        // Generate "locally" a new document for the given collection reference
         DocumentReference docRef = collectionRef.document();
-
-        // Get the new document Id
         String documentUuid = docRef.getId();
-
         question.setQuestion_id(documentUuid);
-
         ApiFuture<WriteResult> writeResult = docRef.set(question);
         writeResult.get();
 
         return documentUuid;
-
     }
 
     public Question getQuestion(String question_id) throws InterruptedException, ExecutionException {
@@ -113,14 +105,22 @@ public class QuestionService {
         ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(question_id).delete();
 
         // Suche nach Quizzen, die die gelöschte Frage referenzieren
-        Query query = dbFirestore.collection(CollectionName.QUIZZES.getName()).whereArrayContains("question_ids",
+        Query quizQuery = dbFirestore.collection(CollectionName.QUIZZES.getName()).whereArrayContains("question_ids",
                 question_id);
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-        for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+        ApiFuture<QuerySnapshot> quizQuerySnapshot = quizQuery.get();
+        for (DocumentSnapshot document : quizQuerySnapshot.get().getDocuments()) {
             Quiz quiz = document.toObject(Quiz.class);
             List<String> questionIds = quiz.getQuestion_ids();
             questionIds.remove(question_id);
             document.getReference().update("question_ids", questionIds);
+        }
+
+        // Suche nach Antworten, die die gelöschte Frage referenzieren
+        Query answerQuery = dbFirestore.collection(CollectionName.ANSWERS.getName()).whereEqualTo("question_id",
+                question_id);
+        ApiFuture<QuerySnapshot> answerQuerySnapshot = answerQuery.get();
+        for (DocumentSnapshot document : answerQuerySnapshot.get().getDocuments()) {
+            document.getReference().delete();
         }
 
         return "Successfully deleted question " + question_id;

@@ -116,14 +116,14 @@ public class CategoryService {
         Query query = dbFirestore.collection(CollectionName.QUESTIONS.getName()).whereEqualTo("category", cat_name);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-            document.getReference().update("category", "");
+            document.getReference().update("category", "Allgemein");
         }
 
         // Suche nach Quizzen, die die gelöschte Kategorie referenzieren
         Query queryQuiz = dbFirestore.collection(CollectionName.QUIZZES.getName()).whereEqualTo("category", cat_name);
         ApiFuture<QuerySnapshot> querySnapshotQuiz = queryQuiz.get();
         for (DocumentSnapshot document : querySnapshotQuiz.get().getDocuments()) {
-            document.getReference().update("category", "");
+            document.getReference().update("category", "Allgemein");
         }
         
         return "Successfully deleted category " + cat_name;

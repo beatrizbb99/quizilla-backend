@@ -3,7 +3,8 @@ package de.hsrm.quiz_gateway.firebase.firestore.enums;
 public enum CollectionName {
     QUIZZES("Quizzes"),
     QUESTIONS("Questions"),
-    CATEGORIES("Categories");
+    CATEGORIES("Categories"),
+    ANSWERS("Answers");
 
     private final String name;
 
