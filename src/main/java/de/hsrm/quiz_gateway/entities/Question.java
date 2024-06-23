@@ -13,6 +13,6 @@ public class Question {
     private List<String> options;
     private int points;
     private String question;
-    private String mediaUrl;
+    private String mediaPath;
 
 }
