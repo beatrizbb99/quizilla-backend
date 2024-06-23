@@ -13,4 +13,6 @@ public class Question {
     private List<String> options;
     private int points;
     private String question;
+    private String mediaPath;
+
 }
