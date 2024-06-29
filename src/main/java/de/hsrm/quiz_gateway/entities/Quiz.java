@@ -14,6 +14,6 @@ public class Quiz {
     private String name;
     private int points = 0;
     private int time;
-    private List<String> question_ids = new ArrayList<>();;
+    private List<String> question_ids = new ArrayList<>();
     private String mediaPath;
 }

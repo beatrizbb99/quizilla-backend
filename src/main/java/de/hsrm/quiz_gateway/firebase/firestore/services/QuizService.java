@@ -18,6 +18,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import de.hsrm.quiz_gateway.entities.Question;
 import de.hsrm.quiz_gateway.entities.Quiz;
+import de.hsrm.quiz_gateway.entities.User;
 import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 
 @Service
@@ -25,20 +26,36 @@ public class QuizService {
 
     private static final String COLLECTION_NAME = CollectionName.QUIZZES.getName();
 
-    public String createQuiz(Quiz quiz) throws InterruptedException, ExecutionException {
+    public String createQuiz(Quiz quiz, String user_id) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        
-        CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
-        DocumentReference docRef = collectionRef.document();
-        String documentUuid = docRef.getId();
-        quiz.setQuiz_id(documentUuid);
-        int totalPoints = calculateTotalPoints(quiz.getQuestion_ids());
-        quiz.setPoints(totalPoints);
 
-        ApiFuture<WriteResult> writeResult = docRef.set(quiz);
-        writeResult.get();
+        // User ref
+        DocumentReference userDocRef = dbFirestore.collection(CollectionName.USERS.getName()).document(user_id);
+        ApiFuture<DocumentSnapshot> future = userDocRef.get();
+        DocumentSnapshot document = future.get();
 
-        return documentUuid;
+        if (document.exists()) {
+            // User exists, create doc
+            CollectionReference quizzesCollectionRef = dbFirestore.collection(COLLECTION_NAME);
+            DocumentReference quizDocRef = quizzesCollectionRef.document();
+            String documentUuid = quizDocRef.getId();
+            quiz.setQuiz_id(documentUuid);
+            int totalPoints = calculateTotalPoints(quiz.getQuestion_ids());
+            quiz.setPoints(totalPoints);
+
+            ApiFuture<WriteResult> writeResult = quizDocRef.set(quiz);
+            writeResult.get();
+
+            // add quiz to user
+            User user = document.toObject(User.class);
+            List<String> quizIds = user.getQuiz_ids();
+            quizIds.add(documentUuid);
+            userDocRef.update("quiz_ids", quizIds);
+
+            return documentUuid;
+        } else {
+            throw new IllegalArgumentException("User does not exist");
+        }
     }
 
     public String addQuestionToQuiz(String quiz_id, String question_id)
@@ -152,7 +169,8 @@ public class QuizService {
                     "Question with id " + question_id + " does not exist in quiz with ID " + quiz_id);
         }
 
-        DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName()).document(question_id);
+        DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName())
+                .document(question_id);
         ApiFuture<DocumentSnapshot> questionFuture = questionRef.get();
         DocumentSnapshot questionDoc = questionFuture.get();
         Question question = questionDoc.toObject(Question.class);
@@ -169,17 +187,39 @@ public class QuizService {
         return "Successfully deleted question with id " + question_id + "from quiz with id " + quiz_id;
     }
 
-    public String deleteQuiz(String quiz_id) {
+    public String deleteQuiz(String quiz_id, String user_id) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(quiz_id).delete();
-        return "Successfully deleted quiz with id " + quiz_id;
+        //User ref
+        DocumentReference documentReference = dbFirestore.collection(CollectionName.USERS.getName()).document(user_id);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot document = future.get();
+
+        if (document.exists() && document.contains("quiz_ids")) {
+            //delete quiz
+            ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(quiz_id).delete();
+            writeResult.get();
+
+            //update user
+            User user = document.toObject(User.class);
+            List<String> quizIds = user.getQuiz_ids();
+
+            if (quizIds.remove(quiz_id)) {
+                documentReference.update("quiz_ids", quizIds);
+                return "Quiz with id: "+ quiz_id + " removed successfully";
+            } else {
+                return "Quiz with id: " + quiz_id + " not found in user " + user_id;
+            }
+        } else {
+            return "User not found or quiz_ids field does not exist";
+        }
     }
 
     private int calculateTotalPoints(List<String> questionIds) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         int totalPoints = 0;
         for (String questionId : questionIds) {
-            DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName()).document(questionId);
+            DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName())
+                    .document(questionId);
             ApiFuture<DocumentSnapshot> future = questionRef.get();
             DocumentSnapshot document = future.get();
             if (document.exists()) {
@@ -189,6 +229,5 @@ public class QuizService {
         }
         return totalPoints;
     }
-
 
 }
