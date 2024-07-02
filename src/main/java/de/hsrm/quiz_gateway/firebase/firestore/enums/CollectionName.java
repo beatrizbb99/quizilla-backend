@@ -4,7 +4,8 @@ public enum CollectionName {
     QUIZZES("Quizzes"),
     QUESTIONS("Questions"),
     CATEGORIES("Categories"),
-    ANSWERS("Answers");
+    ANSWERS("Answers"),
+    USERS("Users");
 
     private final String name;
 

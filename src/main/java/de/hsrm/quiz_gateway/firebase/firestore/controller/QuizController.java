@@ -27,9 +27,9 @@ public class QuizController {
         this.quizService = quizService;
     }
 
-    @PostMapping("/create")
-    public String createQuiz(@RequestBody Quiz quiz) throws InterruptedException, ExecutionException {
-        return quizService.createQuiz(quiz);
+    @PostMapping("/create/{user_id}")
+    public String createQuiz(@RequestBody Quiz quiz, @PathVariable("user_id") String user_id) throws InterruptedException, ExecutionException {
+        return quizService.createQuiz(quiz, user_id);
     }
 
     @PutMapping("quiz/{quiz_id}/question/{question_id}")
@@ -58,9 +58,9 @@ public class QuizController {
         return quizService.deleteQuestionFromQuiz(quiz_id, question_id);
     }
 
-    @DeleteMapping("/delete/{quiz_id}")
-    public String deleteQuiz(@PathVariable("quiz_id") String quiz_id) throws InterruptedException, ExecutionException {
-        return quizService.deleteQuiz(quiz_id);
+    @DeleteMapping("/delete/{quiz_id}/user/{user_id}")
+    public String deleteQuiz(@PathVariable("quiz_id") String quiz_id, @PathVariable("user_id") String user_id) throws InterruptedException, ExecutionException {
+        return quizService.deleteQuiz(quiz_id, user_id);
     }
     
 
