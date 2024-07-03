@@ -1,30 +1,10 @@
 package de.hsrm.quiz_gateway.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import de.hsrm.quiz_gateway.model.User;
-import de.hsrm.quiz_gateway.request.ChangePasswordRequest;
-import de.hsrm.quiz_gateway.request.LoginRequest;
-import de.hsrm.quiz_gateway.request.SignupRequest;
-import de.hsrm.quiz_gateway.response.TokenResponse;
-import de.hsrm.quiz_gateway.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
 
     private final UserDetailsServiceImpl userService;
