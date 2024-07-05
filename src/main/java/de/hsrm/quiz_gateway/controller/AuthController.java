@@ -7,41 +7,28 @@ import de.hsrm.quiz_gateway.request.ChangePasswordRequest;
 import de.hsrm.quiz_gateway.request.LoginRequest;
 import de.hsrm.quiz_gateway.request.SignupRequest;
 import de.hsrm.quiz_gateway.response.TokenResponse;
-import de.hsrm.quiz_gateway.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api")
 public class AuthController {
 
-    private final UserDetailsServiceImpl userService;
-    private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
 
-    public AuthController(UserDetailsServiceImpl userService, UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
-        this.userService = userService;
-        this.userDetailsService = userDetailsService;
+    public AuthController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest request) {
-        User savedUser = userService.save(request.getUsername(),request.getPassword(),request.getEmail());
-        return ok(savedUser);
     }
 
     @PostMapping("/login")
@@ -50,22 +37,13 @@ public class AuthController {
         Authentication authResponse = this.authenticationManager.authenticate(authRequest);
         UserDetails user = (UserDetails) authResponse.getPrincipal();
         String token = JWT.create().withSubject(user.getUsername()).withExpiresAt(Instant.now().plusSeconds(3600)).sign(Algorithm.HMAC256("1234"));
-        ResponseEntity responseEntity = new ResponseEntity<>(token, HttpStatus.OK);
-        return responseEntity;
-    }
-
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //TODO
-        return ok("password changed");
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setAccessToken(token);
+        return ResponseEntity.ok(tokenResponse);
     }
 
     @GetMapping("/self")
     public ResponseEntity<?> getAuthenticatedUser() {
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
-
 }
-

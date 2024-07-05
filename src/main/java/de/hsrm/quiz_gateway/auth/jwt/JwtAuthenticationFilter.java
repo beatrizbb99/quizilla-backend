@@ -22,10 +22,13 @@ import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> UNAUTHENTICATED_ENDPOINTS = Arrays.asList("/auth/login", "/auth/register");
+    private static final List<String> UNAUTHENTICATED_ENDPOINTS = Arrays.asList("/api/login", "/api/register");
 
     @Autowired
     UserDetailsService userDetailsService;
+        public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if(spl.length != 2 || !spl[0].equals("Bearer")) {
                     throw new RuntimeException("Invalid header value");
                 }
-                DecodedJWT decoded = JWT.require(Algorithm.HMAC256("1234")).build().verify(spl[1]);
+                DecodedJWT decoded = JWT.require(Algorithm.HMAC256("12345")).build().verify(spl[1]);
                 String sub = decoded.getSubject();
                 UserDetails userDetails = userDetailsService.loadUserByUsername(sub);
                 UsernamePasswordAuthenticationToken authentication =
