@@ -36,5 +36,4 @@ build/
 src/main/resources/serviceAccountKey.json
 src/target/classes/serviceAccountKey.json
 # Ignoriere
-src/main/resources/storageKey.json
 src/main/resources/CloudFunctionKey.json

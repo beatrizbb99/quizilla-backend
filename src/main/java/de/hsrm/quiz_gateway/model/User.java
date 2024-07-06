@@ -66,6 +66,14 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    public enum Provider {
+        LOCAL, GOOGLE
+    }
 
 }
 

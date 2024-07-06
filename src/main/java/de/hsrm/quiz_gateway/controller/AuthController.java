@@ -1,6 +1,25 @@
 package de.hsrm.quiz_gateway.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import de.hsrm.quiz_gateway.model.User;
+import de.hsrm.quiz_gateway.request.ChangePasswordRequest;
+import de.hsrm.quiz_gateway.request.LoginRequest;
+import de.hsrm.quiz_gateway.request.SignupRequest;
+import de.hsrm.quiz_gateway.service.UserDetailsServiceImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 
 
@@ -30,7 +49,7 @@ public class AuthController {
         Authentication authResponse = this.authenticationManager.authenticate(authRequest);
         UserDetails user = (UserDetails) authResponse.getPrincipal();
         String token = JWT.create().withSubject(user.getUsername()).withExpiresAt(Instant.now().plusSeconds(3600)).sign(Algorithm.HMAC256("1234"));
-        ResponseEntity responseEntity = new ResponseEntity<>(token, HttpStatus.OK);
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(token, HttpStatus.OK);
         return responseEntity;
     }
 
@@ -45,7 +64,6 @@ public class AuthController {
     public ResponseEntity<?> getAuthenticatedUser() {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-
 
 }
 

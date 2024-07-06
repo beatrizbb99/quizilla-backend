@@ -1,11 +1,4 @@
 runtime: java
 env: flex
-runtime_config:
-operating_system: "debian11"
-runtime_version: "21"
-handlers:
-  - url: /.*
-script: this field is required, but ignored
 
-manual_scaling:
-instances: 2gc
+
