@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
@@ -16,20 +17,20 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.cloud.FirestoreClient;
 
 import de.hsrm.quiz_gateway.entities.Answer;
-import de.hsrm.quiz_gateway.entities.Category;
 import de.hsrm.quiz_gateway.entities.Question;
 import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 
 @Service
 public class AnswerService {
 
+    @Autowired
+    private Firestore dbFirestore;
+
     private static final String COLLECTION_NAME = CollectionName.ANSWERS.getName();
 
     public String createAnswer(Answer answer, String question_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
         DocumentReference docRef = collectionRef.document();
         String documentUuid = docRef.getId();
@@ -42,7 +43,6 @@ public class AnswerService {
     }
 
     public String getAnswer(String question_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         Query query  = dbFirestore.collection(COLLECTION_NAME).whereEqualTo("question_id", question_id);
         ApiFuture<QuerySnapshot> future = query.get();
         QuerySnapshot querySnapshot = future.get();
@@ -57,7 +57,6 @@ public class AnswerService {
 
     public Map<String, Object> checkAnswers(Map<String, String> answers)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection(COLLECTION_NAME);
         Map<String, Object> result = new HashMap<>();
 

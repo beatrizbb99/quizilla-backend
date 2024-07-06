@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
@@ -19,10 +20,12 @@ import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 @Service
 public class UserService {
 
+    @Autowired
+    private Firestore dbFirestore;
+
     private static final String COLLECTION_NAME = CollectionName.USERS.getName();
 
     public List<Quiz> getUserQuizzes(String user_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(user_id);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot document = future.get();
