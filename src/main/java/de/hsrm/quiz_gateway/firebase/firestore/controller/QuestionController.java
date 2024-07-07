@@ -12,12 +12,14 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.QuestionService;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/questions")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class QuestionController {
 
     public QuestionService questionService;

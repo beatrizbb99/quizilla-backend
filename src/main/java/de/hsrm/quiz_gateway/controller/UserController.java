@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://34.95.109.147")
 public class UserController {
     @PostMapping("/users")
     ResponseEntity<String> addUser( @RequestBody User user) {

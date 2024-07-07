@@ -9,12 +9,14 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.UserService;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
 @RequestMapping("api/users")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class UsersController {
     
     public UserService userService;

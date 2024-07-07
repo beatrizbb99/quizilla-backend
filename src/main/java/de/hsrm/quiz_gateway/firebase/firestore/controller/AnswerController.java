@@ -3,6 +3,7 @@ package de.hsrm.quiz_gateway.firebase.firestore.controller;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.AnswerService;
 
 @RestController
 @RequestMapping("api/answers")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class AnswerController {
 
     public AnswerService answerService;

@@ -29,24 +29,6 @@ public class CategoryService {
     private static final String COLLECTION_NAME = CollectionName.CATEGORIES.getName();
 
     public String createCategory(Category category) throws InterruptedException, ExecutionException {
-
-        /*
-         * // Generiere eine UUID für die Kategorie
-         * String categoryId = UUID.randomUUID().toString();
-         * 
-         * // Setze die UUID als ID für die Kategorie
-         * category.setCategory_id(categoryId);
-         * 
-         * // Speichere die Kategorie in Firestore mit dem Kategorie-Namen als
-         * Dokument-ID
-         * ApiFuture<WriteResult> collectionsApiFuture =
-         * dbFirestore.collection(COLLECTION_NAME).document(category.getName()).set(
-         * category);
-         * 
-         * // Rückgabe der Aktualisierungszeit des Dokuments
-         * return collectionsApiFuture.get().getUpdateTime().toString();
-         */
-
         // Überprüfen, ob eine Kategorie mit dem gleichen Namen bereits vorhanden ist
         Query query = dbFirestore.collection(COLLECTION_NAME).whereEqualTo("name", category.getName());
         ApiFuture<QuerySnapshot> querySnapshot = query.get();

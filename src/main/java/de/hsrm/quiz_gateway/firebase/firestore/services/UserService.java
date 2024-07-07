@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 
 import de.hsrm.quiz_gateway.entities.Quiz;
 import de.hsrm.quiz_gateway.entities.User;
@@ -23,6 +25,20 @@ public class UserService {
     private Firestore dbFirestore;
 
     private static final String COLLECTION_NAME = CollectionName.USERS.getName();
+
+    public String createUser(String username, int userId) throws InterruptedException, ExecutionException {
+        String user_id = String.valueOf(userId);
+        CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
+        DocumentReference docRef = collectionRef.document(user_id);
+        User user = new User();
+        user.setName(username);
+        user.setUser_id(user_id);
+
+        ApiFuture<WriteResult> writeResult = docRef.set(user);
+        writeResult.get();
+
+        return "User mit id: " + user_id + "in firebase hinzugefügt.";
+    }
 
     public List<Quiz> getUserQuizzes(String user_id) throws InterruptedException, ExecutionException {
         DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(user_id);

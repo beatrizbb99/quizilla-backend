@@ -2,6 +2,8 @@ package de.hsrm.quiz_gateway.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+
+import de.hsrm.quiz_gateway.firebase.firestore.services.UserService;
 import de.hsrm.quiz_gateway.model.User;
 import de.hsrm.quiz_gateway.request.ChangePasswordRequest;
 import de.hsrm.quiz_gateway.request.LoginRequest;
@@ -18,6 +20,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -25,22 +30,32 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class AuthController {
 
     private final UserDetailsServiceImpl userService;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
+    private final UserService firestoreUserService;
 
-    public AuthController(UserDetailsServiceImpl userService, UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+
+    public AuthController(UserDetailsServiceImpl userService, UserDetailsService userDetailsService, AuthenticationManager authenticationManager, UserService firestoUserService) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
+        this.firestoreUserService = firestoUserService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest request) {
         User savedUser = userService.save(request.getUsername(),request.getPassword(),request.getEmail());
+        try {
+            firestoreUserService.createUser(savedUser.getUsername(), savedUser.getId() );
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
         return ok(savedUser);
     }
 
@@ -49,8 +64,12 @@ public class AuthController {
         Authentication authRequest = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authResponse = this.authenticationManager.authenticate(authRequest);
         UserDetails user = (UserDetails) authResponse.getPrincipal();
+        User userInformation = (User) authResponse.getPrincipal();
         String token = JWT.create().withSubject(user.getUsername()).withExpiresAt(Instant.now().plusSeconds(3600)).sign(Algorithm.HMAC256("1234"));
-        ResponseEntity<String> responseEntity = new ResponseEntity<>(token, HttpStatus.OK);
+        Map<String, String> body = new HashMap<>();
+        body.put("token",token);
+        body.put("id", String.valueOf(userInformation.getId()));
+        ResponseEntity<?> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
         return responseEntity;
     }
 
