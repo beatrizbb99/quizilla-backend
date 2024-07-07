@@ -1,27 +1,21 @@
-Quizilla
+# Backend for Quizilla Website
 
+# Spring Boot Application Google App Engine Standard with Java 21
 
-## Description
+## Local Setup
+$ mvn clean package
+$ mvn spring-boot:run
 
-Our web application is a quiz for many users where quizzes can be created and shared.
+Open localhost:8080/
 
-## Technologies Used
+## Deploying to Google Cloud
 
-- Jakarta EE
-- Spring MVC
+```bash
+gcloud app deploy
+```
 
-## Prerequisites
-
-What things you need to install and how to install them:
-
-- Java 21
-- Spring MVC 3.3.0
-
-## Installation and Setup
-
-### Step 1: Clone the repo
-
-### Step 2: Open with your IDE and create a branch
-
-### Step 3: Write code 
-
+To view your app, use command:
+```
+gcloud app browse
+```
+Or navigate to `https://<your-project-id>.appspot.com`.

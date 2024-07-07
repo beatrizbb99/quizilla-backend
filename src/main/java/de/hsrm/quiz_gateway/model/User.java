@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Entity
@@ -65,6 +64,14 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    public enum Provider {
+        LOCAL, GOOGLE
     }
 
 }

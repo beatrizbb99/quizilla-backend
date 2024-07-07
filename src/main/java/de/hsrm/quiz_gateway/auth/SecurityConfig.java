@@ -2,12 +2,14 @@ package de.hsrm.quiz_gateway.auth;
 
 import de.hsrm.quiz_gateway.auth.jwt.AuthEntryPoint;
 import de.hsrm.quiz_gateway.auth.jwt.JwtAuthenticationFilter;
+import de.hsrm.quiz_gateway.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,10 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.sql.DataSource;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity()
 public class SecurityConfig {
     private DataSource dataSource;
     private AuthEntryPoint authEntryPoint;
+    private CustomOAuth2UserService oauthUserService;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -33,6 +36,7 @@ public class SecurityConfig {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .usersByUsernameQuery("SELECT username, password, enabled FROM users WHERE username = ?")
@@ -48,7 +52,9 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize-> authorize
                         .anyRequest().permitAll()
-                );
+                )
+                .oauth2Login(Customizer.withDefaults())
+        ;
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
