@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
@@ -14,7 +15,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.cloud.FirestoreClient;
 
 import de.hsrm.quiz_gateway.entities.Question;
 import de.hsrm.quiz_gateway.entities.Quiz;
@@ -24,10 +24,12 @@ import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 @Service
 public class QuizService {
 
+    @Autowired
+    private Firestore dbFirestore;
+
     private static final String COLLECTION_NAME = CollectionName.QUIZZES.getName();
 
     public String createQuiz(Quiz quiz, String user_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
 
         // User ref
         DocumentReference userDocRef = dbFirestore.collection(CollectionName.USERS.getName()).document(user_id);
@@ -60,7 +62,6 @@ public class QuizService {
 
     public String addQuestionToQuiz(String quiz_id, String question_id)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
 
         // Check if the question exists
         DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName())
@@ -101,7 +102,6 @@ public class QuizService {
     }
 
     public Quiz getQuiz(String quiz_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(quiz_id);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot document = future.get();
@@ -115,7 +115,6 @@ public class QuizService {
     }
 
     public List<Quiz> getAllQuizzes() throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
 
         CollectionReference quizRef = dbFirestore.collection(COLLECTION_NAME);
 
@@ -133,7 +132,6 @@ public class QuizService {
     }
 
     public String updateQuiz(String quiz_id, Quiz quiz) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference quizRef = dbFirestore.collection(COLLECTION_NAME).document(quiz_id);
 
         ApiFuture<DocumentSnapshot> future = quizRef.get();
@@ -152,8 +150,6 @@ public class QuizService {
 
     public String deleteQuestionFromQuiz(String quiz_id, String question_id)
             throws InterruptedException, ExecutionException {
-
-        Firestore dbFirestore = FirestoreClient.getFirestore();
 
         DocumentReference quizRef = dbFirestore.collection(COLLECTION_NAME).document(quiz_id);
         ApiFuture<DocumentSnapshot> quizFuture = quizRef.get();
@@ -188,7 +184,6 @@ public class QuizService {
     }
 
     public String deleteQuiz(String quiz_id, String user_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         //User ref
         DocumentReference documentReference = dbFirestore.collection(CollectionName.USERS.getName()).document(user_id);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
@@ -215,7 +210,6 @@ public class QuizService {
     }
 
     private int calculateTotalPoints(List<String> questionIds) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         int totalPoints = 0;
         for (String questionId : questionIds) {
             DocumentReference questionRef = dbFirestore.collection(CollectionName.QUESTIONS.getName())

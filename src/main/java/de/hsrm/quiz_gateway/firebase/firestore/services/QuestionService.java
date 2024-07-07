@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
@@ -25,10 +26,12 @@ import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 @Service
 public class QuestionService {
 
+    @Autowired
+    private Firestore dbFirestore;
+
     private static final String COLLECTION_NAME = CollectionName.QUESTIONS.getName();
 
     public String createQuestion(Question question) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
         DocumentReference docRef = collectionRef.document();
         String documentUuid = docRef.getId();
@@ -40,7 +43,6 @@ public class QuestionService {
     }
 
     public Question getQuestion(String question_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(question_id);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot document = future.get();
@@ -54,7 +56,6 @@ public class QuestionService {
     }
 
     public List<Question> getAllQuestions() throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
         List<Question> questions = new ArrayList<>();
         ApiFuture<QuerySnapshot> future = collectionRef.get();
@@ -70,7 +71,6 @@ public class QuestionService {
 
     public List<Question> getAllQuestionsWithIds(List<String> questionIds)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionRef = dbFirestore.collection(COLLECTION_NAME);
         List<Question> questions = new ArrayList<>();
         ApiFuture<QuerySnapshot> future = collectionRef.whereIn("question_id", questionIds).get();
@@ -86,7 +86,6 @@ public class QuestionService {
 
     public String updateQuestion(String question_id, Question question)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference questionRef = dbFirestore.collection(COLLECTION_NAME).document(question_id);
 
         ApiFuture<DocumentSnapshot> future = questionRef.get();
@@ -101,7 +100,6 @@ public class QuestionService {
     }
 
     public String deleteQuestion(String question_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(question_id).delete();
 
         // Suche nach Quizzen, die die gelöschte Frage referenzieren

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
@@ -23,10 +24,12 @@ import de.hsrm.quiz_gateway.firebase.firestore.enums.CollectionName;
 @Service
 public class CategoryService {
 
+    @Autowired
+    private Firestore dbFirestore;
+
     private static final String COLLECTION_NAME = CollectionName.CATEGORIES.getName();
 
     public String createCategory(Category category) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
 
         /*
          * // Generiere eine UUID für die Kategorie
@@ -65,7 +68,6 @@ public class CategoryService {
     }
 
     public Category getCategory(String category_id) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection(COLLECTION_NAME).document(category_id);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot document = future.get();
@@ -79,7 +81,6 @@ public class CategoryService {
     }
 
     public List<Category> getAllCategories() throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference categoriesRef = dbFirestore.collection(COLLECTION_NAME);
         List<Category> categories = new ArrayList<>();
         ApiFuture<QuerySnapshot> future = categoriesRef.get();
@@ -94,7 +95,6 @@ public class CategoryService {
     }
 
     public String updateCategory(String category_id, Category category) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference catRef = dbFirestore.collection(COLLECTION_NAME).document(category_id);
 
         ApiFuture<DocumentSnapshot> future = catRef.get();
@@ -109,7 +109,6 @@ public class CategoryService {
     }
 
     public String deleteCategory(String category_id, String cat_name) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> writeResult = dbFirestore.collection(COLLECTION_NAME).document(category_id).delete();
 
         // Suche nach Fragen, die die gelöschte Kategorie referenzieren
