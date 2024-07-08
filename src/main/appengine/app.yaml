@@ -1,12 +1,14 @@
 # application: reset
 # version: 1
 runtime: java21
+instance_class: F2
 automatic_scaling:
   min_idle_instances: 1
-  max_idle_instances: 1
+  max_idle_instances: 3
   min_pending_latency: automatic
   max_pending_latency: automatic
+  min_instances: 1
 
 handlers:
-- url: .*
+- url: /.*
   script: auto

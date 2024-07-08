@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/questions")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class QuestionController {
 
     public QuestionService questionService;

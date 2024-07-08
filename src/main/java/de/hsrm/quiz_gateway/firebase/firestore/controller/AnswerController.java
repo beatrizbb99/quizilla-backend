@@ -16,7 +16,7 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.AnswerService;
 
 @RestController
 @RequestMapping("api/answers")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class AnswerController {
 
     public AnswerService answerService;

@@ -30,7 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://34.95.109.147")
 public class AuthController {
 
     private final UserDetailsServiceImpl userService;
@@ -59,7 +59,7 @@ public class AuthController {
         return ok(savedUser);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/loginNormal")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Authentication authRequest = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authResponse = this.authenticationManager.authenticate(authRequest);
