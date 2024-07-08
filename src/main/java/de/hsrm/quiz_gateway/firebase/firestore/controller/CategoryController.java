@@ -18,7 +18,7 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.CategoryService;
 
 @RestController
 @RequestMapping("api/categories")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "http://34.149.22.243")
 public class CategoryController {
 
     public CategoryService catService;
@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{category_id}")
-    public Category getCategory(@PathVariable String category_id) throws InterruptedException, ExecutionException {
+    public Category getCategory(@PathVariable("category_id") String category_id) throws InterruptedException, ExecutionException {
         return catService.getCategory(category_id);
     }
 
@@ -43,12 +43,12 @@ public class CategoryController {
     }
 
     @PutMapping("/update/{category_id}")
-    public String updateCategory(@PathVariable String category_id, @RequestBody Category category) throws InterruptedException, ExecutionException {
+    public String updateCategory(@PathVariable("category_id") String category_id, @RequestBody Category category) throws InterruptedException, ExecutionException {
         return catService.updateCategory(category_id, category);
     }
 
     @DeleteMapping("/delete/{category_id}/{category_name}")
-    public String deleteCategory(@PathVariable String category_id, @PathVariable String category_name) throws InterruptedException, ExecutionException {
+    public String deleteCategory(@PathVariable("category_id") String category_id, @PathVariable("category_name") String category_name) throws InterruptedException, ExecutionException {
         return catService.deleteCategory(category_id, category_name);
     }
 

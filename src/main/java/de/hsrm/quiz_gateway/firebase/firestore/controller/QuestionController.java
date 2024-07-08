@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/questions")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "http://34.149.22.243")
 public class QuestionController {
 
     public QuestionService questionService;
@@ -34,7 +34,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{question_id}")
-    public Question getQuestion(@PathVariable String question_id) throws InterruptedException, ExecutionException {
+    public Question getQuestion(@PathVariable("question_id") String question_id) throws InterruptedException, ExecutionException {
         return questionService.getQuestion(question_id);
     }
 
@@ -49,12 +49,12 @@ public class QuestionController {
     }
 
     @PutMapping("/update/{question_id}")
-    public String updateQuestion(@PathVariable String question_id, @RequestBody Question question) throws InterruptedException, ExecutionException {
+    public String updateQuestion(@PathVariable("question_id") String question_id, @RequestBody Question question) throws InterruptedException, ExecutionException {
         return questionService.updateQuestion(question_id, question);
     }
 
     @DeleteMapping("/delete/{question_id}")
-    public String deleteQuestion(@PathVariable String question_id) throws InterruptedException, ExecutionException {
+    public String deleteQuestion(@PathVariable("question_id") String question_id) throws InterruptedException, ExecutionException {
         return questionService.deleteQuestion(question_id);
     }
     

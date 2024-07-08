@@ -22,7 +22,7 @@ import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> UNAUTHENTICATED_ENDPOINTS = Arrays.asList("/api/login", "/api/register","/oauth/**", "/hello");
+    private static final List<String> UNAUTHENTICATED_ENDPOINTS = Arrays.asList("/api/loginNormal", "/api/register","/oauth/**", "/hello");
 
     @Autowired
     UserDetailsService userDetailsService;

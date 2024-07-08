@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/users")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "http://34.149.22.243")
 public class UsersController {
     
     public UserService userService;
@@ -26,7 +26,7 @@ public class UsersController {
     }
 
     @GetMapping("/{user_id}/quizzes")
-    public List<Quiz> getUserQuizzes(@PathVariable String user_id) throws InterruptedException, ExecutionException {
+    public List<Quiz> getUserQuizzes(@PathVariable("user_id") String user_id) throws InterruptedException, ExecutionException {
         return userService.getUserQuizzes(user_id);
     }
     

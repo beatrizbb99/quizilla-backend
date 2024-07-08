@@ -3,7 +3,6 @@ package de.hsrm.quiz_gateway.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import de.hsrm.quiz_gateway.firebase.firestore.services.UserService;
 import de.hsrm.quiz_gateway.model.User;
 import de.hsrm.quiz_gateway.request.ChangePasswordRequest;
 import de.hsrm.quiz_gateway.request.LoginRequest;
@@ -18,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import de.hsrm.quiz_gateway.firebase.firestore.services.UserService;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -28,9 +28,10 @@ import static org.springframework.http.ResponseEntity.ok;
 
 
 
+
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "http://34.149.22.243")
 public class AuthController {
 
     private final UserDetailsServiceImpl userService;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/quizzes")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "http://34.149.22.243")
 public class QuizController {
 
     public QuizService quizService;
@@ -30,18 +30,18 @@ public class QuizController {
     }
 
     @PostMapping("/create/{user_id}")
-    public String createQuiz(@RequestBody Quiz quiz, @PathVariable String user_id) throws InterruptedException, ExecutionException {
+    public String createQuiz(@RequestBody Quiz quiz, @PathVariable("user_id") String user_id) throws InterruptedException, ExecutionException {
         return quizService.createQuiz(quiz, user_id);
     }
 
     @PutMapping("quiz/{quiz_id}/question/{question_id}")
-    public String addQuestionToQuiz(@PathVariable String quiz_id, @PathVariable String question_id) throws InterruptedException, ExecutionException {
+    public String addQuestionToQuiz(@PathVariable("quiz_id") String quiz_id, @PathVariable("question_id") String question_id) throws InterruptedException, ExecutionException {
         return quizService.addQuestionToQuiz(quiz_id, question_id);
     }
     
 
     @GetMapping("/{quiz_id}")
-    public Quiz getQuiz(@PathVariable String quiz_id) throws InterruptedException, ExecutionException {
+    public Quiz getQuiz(@PathVariable("quiz_id") String quiz_id) throws InterruptedException, ExecutionException {
         return quizService.getQuiz(quiz_id);
     }
 
@@ -51,17 +51,17 @@ public class QuizController {
     }
 
     @PutMapping("/update/{quiz_id}")
-    public String updateQuiz(@PathVariable String quiz_id, @RequestBody Quiz quiz) throws InterruptedException, ExecutionException {
+    public String updateQuiz(@PathVariable("quiz_id") String quiz_id, @RequestBody Quiz quiz) throws InterruptedException, ExecutionException {
        return quizService.updateQuiz(quiz_id, quiz);
     }
 
     @PutMapping("/delete/quiz/{quiz_id}/question/{question_id}")
-    public String deleteQuestionFromQuiz(@PathVariable String quiz_id, @PathVariable String question_id) throws InterruptedException, ExecutionException {
+    public String deleteQuestionFromQuiz(@PathVariable("quiz_id") String quiz_id, @PathVariable("question_id") String question_id) throws InterruptedException, ExecutionException {
         return quizService.deleteQuestionFromQuiz(quiz_id, question_id);
     }
 
     @DeleteMapping("/delete/{quiz_id}/user/{user_id}")
-    public String deleteQuiz(@PathVariable String quiz_id, @PathVariable String user_id) throws InterruptedException, ExecutionException {
+    public String deleteQuiz(@PathVariable("quiz_id") String quiz_id, @PathVariable("user_id") String user_id) throws InterruptedException, ExecutionException {
         return quizService.deleteQuiz(quiz_id, user_id);
     }
     

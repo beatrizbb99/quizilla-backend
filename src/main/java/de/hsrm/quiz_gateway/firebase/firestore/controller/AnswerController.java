@@ -16,7 +16,7 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.AnswerService;
 
 @RestController
 @RequestMapping("api/answers")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "http://34.149.22.243")
 public class AnswerController {
 
     public AnswerService answerService;
@@ -26,12 +26,12 @@ public class AnswerController {
     }
 
     @PostMapping("/create/{question_id}")
-    public String createAnswer(@RequestBody Answer answer, @PathVariable String question_id) throws InterruptedException, ExecutionException {
+    public String createAnswer(@RequestBody Answer answer, @PathVariable("question_id") String question_id) throws InterruptedException, ExecutionException {
         return answerService.createAnswer(answer, question_id);
     }
 
     @GetMapping("/{question_id}")
-    public String getAnswer(@PathVariable String question_id) throws InterruptedException, ExecutionException {
+    public String getAnswer(@PathVariable("question_id") String question_id) throws InterruptedException, ExecutionException {
         return answerService.getAnswer(question_id);
     }
 
