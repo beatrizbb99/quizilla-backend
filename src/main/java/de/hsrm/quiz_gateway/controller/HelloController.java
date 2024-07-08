@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "*")
 public class HelloController {
     
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Hello! Server Works!!!";
+        return "Hello! Server Works!!! v1";
     }
     
 }

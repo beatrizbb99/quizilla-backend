@@ -30,7 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final UserDetailsServiceImpl userService;

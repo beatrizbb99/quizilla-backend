@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/users")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "*")
 public class UsersController {
     
     public UserService userService;

@@ -1,5 +1,6 @@
 de\hsrm\quiz_gateway\controller\AuthController.class
 de\hsrm\quiz_gateway\service\UserDetailsServiceImpl.class
+de\hsrm\quiz_gateway\controller\WebConfig.class
 de\hsrm\quiz_gateway\model\CustomOAuth2User.class
 de\hsrm\quiz_gateway\controller\UserController.class
 de\hsrm\quiz_gateway\firebase\firestore\controller\QuizController.class

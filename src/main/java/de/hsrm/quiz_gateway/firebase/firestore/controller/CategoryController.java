@@ -18,7 +18,7 @@ import de.hsrm.quiz_gateway.firebase.firestore.services.CategoryService;
 
 @RestController
 @RequestMapping("api/categories")
-@CrossOrigin(origins = "http://34.95.109.147")
+@CrossOrigin(origins = "*")
 public class CategoryController {
 
     public CategoryService catService;
