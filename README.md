@@ -6,7 +6,7 @@
 $ mvn clean package
 $ mvn spring-boot:run
 
-Open localhost:8080/
+Open localhost:9090/
 
 ## Deploying to Google Cloud
 
@@ -14,8 +14,8 @@ Open localhost:8080/
 gcloud app deploy
 ```
 
-To view your app, use command:
+To view the app, use command:
 ```
 gcloud app browse
 ```
-Or navigate to `https://<your-project-id>.appspot.com`.
+Or navigate to `https://<project-id>.appspot.com`.
